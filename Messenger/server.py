@@ -11,6 +11,7 @@ from common.variables import *
 from common.utils import *
 from decos import log
 from metaclasses import ServerMaker
+from server_database import ServerStorage
 
 logger = logging.getLogger('server_dist')
 
@@ -43,13 +44,14 @@ class Server(metaclass=ServerMaker):
 
     port = Port()
 
-    def __init__(self, listen_address, listen_port):
+    def __init__(self, listen_address, listen_port, db):
         self.sock = None
         self.addr = listen_address
         self.port = listen_port
         self.clients = []
         self.messages = []
         self.names = dict()
+        self.database = db
 
     def init_socket(self):
         logger.info(
@@ -131,6 +133,8 @@ class Server(metaclass=ServerMaker):
             # иначе отправляем ответ и завершаем соединение.
             if message[USER][ACCOUNT_NAME] not in self.names.keys():
                 self.names[message[USER][ACCOUNT_NAME]] = client
+                client_ip, client_port = client.getpeername()
+                self.database.user_login(message[USER][ACCOUNT_NAME], client_ip, client_port)
                 send_message(client, RESPONSE_200)
             else:
                 response = RESPONSE_400
@@ -152,6 +156,7 @@ class Server(metaclass=ServerMaker):
         elif ACTION in message \
                 and message[ACTION] == EXIT \
                 and ACCOUNT_NAME in message:
+            self.database.user_logout(message[ACCOUNT_NAME])
             self.clients.remove(self.names[ACCOUNT_NAME])
             self.names[ACCOUNT_NAME].close()
             del self.names[ACCOUNT_NAME]
@@ -169,8 +174,11 @@ def main():
     # то задаём значения по умолчанию.
     listen_address, listen_port = arg_parser()
 
+    # Инициализация базы данных
+    database = ServerStorage()
+
     # Создание экземпляра класса - сервера.
-    server = Server(listen_address, listen_port)
+    server = Server(listen_address, listen_port, database)
     server.main_loop()
 
 
