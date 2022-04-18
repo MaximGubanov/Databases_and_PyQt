@@ -1,0 +1,4 @@
+/.env
+/venv/
+.idea/misc.xml
+.idea/Databases_and_PyQt.iml
