@@ -1,0 +1,6 @@
+/venv/
+.idea/misc.xml
+.idea/Databases_and_PyQt.iml
+
+*/__pycache__/*
+__pycache__/decos.cpython-38.pyc
