@@ -1,14 +1,7 @@
 import socket
-import sys
 import argparse
-import json
-import logging
 import select
 import threading
-import time
-import logs.config_server_log
-from errors import IncorrectDataRecivedError
-from common.variables import *
 from common.utils import *
 from decos import log
 from metaclasses import ServerMaker
@@ -18,7 +11,6 @@ import os
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtCore import QTimer
 from server_gui import MainWindow, gui_create_model, HistoryWindow, create_stat_model, ConfigWindow
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 logger = logging.getLogger('server_dist')
 

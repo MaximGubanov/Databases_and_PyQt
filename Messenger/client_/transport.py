@@ -1,8 +1,7 @@
 import socket
 import sys
 import time
-import logging
-import json
+
 import threading
 from PyQt5.QtCore import pyqtSignal, QObject
 
