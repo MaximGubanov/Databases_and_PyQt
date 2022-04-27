@@ -13,17 +13,18 @@ from pprint import pprint
 
 class ServerMaker(type):
     def __init__(cls, clsname, bases, clsdict):
-        # clsname - экземпляр метакласса - Server
-        # bases - кортеж базовых классов - ()
-        # clsdict - словарь атрибутов и методов экземпляра метакласса
-        # {'__module__': '__main__',
-        # '__qualname__': 'Server',
-        # 'port': <descrptrs.Port object at 0x000000DACC8F5748>,
-        # '__init__': <function Server.__init__ at 0x000000DACCE3E378>,
-        # 'init_socket': <function Server.init_socket at 0x000000DACCE3E400>,
-        # 'main_loop': <function Server.main_loop at 0x000000DACCE3E488>,
-        # 'process_message': <function Server.process_message at 0x000000DACCE3E510>,
-        # 'process_client_message': <function Server.process_client_message at 0x000000DACCE3E598>}
+        """ clsname - экземпляр метакласса - Server
+        bases - кортеж базовых классов - ()
+         clsdict - словарь атрибутов и методов экземпляра метакласса
+        {'__module__': '__main__',
+        '__qualname__': 'Server',
+        'port': <descrptrs.Port object at 0x000000DACC8F5748>,
+         '__init__': <function Server.__init__ at 0x000000DACCE3E378>,
+         'init_socket': <function Server.init_socket at 0x000000DACCE3E400>,
+         'main_loop': <function Server.main_loop at 0x000000DACCE3E488>,
+         'process_message': <function Server.process_message at 0x000000DACCE3E510>,
+         'process_client_message': <function Server.process_client_message at 0x000000DACCE3E598>}
+         """
 
         # Список методов, которые используются в функциях класса:
         methods = []    # получаем с помощью 'LOAD_GLOBAL'
@@ -82,8 +83,8 @@ class ServerMaker(type):
         super().__init__(clsname, bases, clsdict)
 
 
-# Метакласс для проверки корректности клиентов:
 class ClientMaker(type):
+    """Метакласс для проверки корректности клиентов"""
     def __init__(cls, clsname, bases, clsdict):
         # Список методов, которые используются в функциях класса:
         methods = []

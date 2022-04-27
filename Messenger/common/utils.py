@@ -6,10 +6,11 @@ sys.path.append('../')
 from decos import log
 
 
-# Утилита приёма и декодирования сообщения
-# принимает байты выдаёт словарь, если приняточто-то другое отдаёт ошибку значения
 @log
 def get_message(client):
+    """Утилита приёма и декодирования сообщения
+    принимает байты выдаёт словарь, если приняточто-то другое отдаёт ошибку значения
+    """
     encoded_response = client.recv(MAX_PACKAGE_LENGTH)
     if isinstance(encoded_response, bytes):
         json_response = encoded_response.decode(ENCODING)
@@ -22,10 +23,11 @@ def get_message(client):
         raise IncorrectDataRecivedError
 
 
-# Утилита кодирования и отправки сообщения
-# принимает словарь и отправляет его
 @log
 def send_message(sock, message):
+    """Утилита кодирования и отправки сообщения
+    принимает словарь и отправляет его
+    """
     if not isinstance(message, dict):
         raise NonDictInputError
     js_message = json.dumps(message)

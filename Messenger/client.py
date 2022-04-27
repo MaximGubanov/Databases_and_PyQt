@@ -50,6 +50,7 @@ def arg_parser():
 
 # Основная функция клиента
 if __name__ == '__main__':
+    """Основная функция клиента"""
     # Загружаем параметы коммандной строки
     server_address, server_port, client_name, client_passwd = arg_parser()
     logger.debug('Args loaded')

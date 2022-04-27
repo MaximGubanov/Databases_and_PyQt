@@ -17,6 +17,7 @@ logger = logging.getLogger('server_dist')
 
 @log
 def arg_parser():
+    """Ф-я парсит аргументы, которые пользователь вводит в командной строке"""
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', default=DEFAULT_PORT, type=int, nargs='?')
     parser.add_argument('-a', default='', nargs='?')
@@ -27,6 +28,7 @@ def arg_parser():
 
 
 class Port:
+    """Дескриптор для порта, чтобы пользователь не мог ввести не правильное значение"""
     def __set__(self, instance, value):
         if not 1023 < value < 65536:
             logger.critical(
@@ -40,6 +42,7 @@ class Port:
 
 
 class Server(threading.Thread, metaclass=ServerMaker):
+    """Основной класс сервера"""
 
     port = Port()
 
@@ -54,6 +57,7 @@ class Server(threading.Thread, metaclass=ServerMaker):
         self.database = db
 
     def init_socket(self):
+        """Инициализация сокета"""
         logger.info(
             f'Запущен сервер, порт для подключений: {self.port}, '
             f'адрес с которого принимаются подключения: {self.addr}. '
@@ -66,6 +70,7 @@ class Server(threading.Thread, metaclass=ServerMaker):
         self.sock.listen()
 
     def main_loop(self):
+        """Основной цикл сервера. Сервер постоянно слушает клиентов"""
         self.init_socket()
 
         while True:
@@ -105,10 +110,11 @@ class Server(threading.Thread, metaclass=ServerMaker):
                     del self.names[message[DESTINATION]]
             self.messages.clear()
 
-    # Функция адресной отправки сообщения определённому клиенту.
-    # Принимает словарь сообщение, список зарегистрированных
-    # пользователей и слушающие сокеты. Ничего не возвращает.
     def process_message(self, message, listen_socks):
+        """ Функция адресной отправки сообщения определённому клиенту.
+        Принимает словарь сообщение, список зарегистрированных
+        пользователей и слушающие сокеты. Ничего не возвращает.
+        """
         if message[DESTINATION] in self.names and \
                 self.names[message[DESTINATION]] in listen_socks:
             send_message(self.names[message[DESTINATION]], message)
@@ -122,9 +128,10 @@ class Server(threading.Thread, metaclass=ServerMaker):
                 f'Пользователь {message[DESTINATION]} не зарегистрирован '
                 f'на сервере, отправка сообщения невозможна.')
 
-    # Обработчик сообщений от клиентов, принимает словарь - сообщение от клиента,
-    # проверяет корректность, отправляет словарь-ответ в случае необходимости.
     def process_client_message(self, message, client):
+        """ Обработчик сообщений от клиентов, принимает словарь - сообщение от клиента,
+        проверяет корректность, отправляет словарь-ответ в случае необходимости.
+        """
         logger.debug(f'Разбор сообщения от клиента : {message}')
         # Если это сообщение о присутствии, принимаем и отвечаем
         if ACTION in message and message[ACTION] == PRESENCE \
@@ -202,9 +209,10 @@ def main():
     main_window.active_clients_table.resizeColumnsToContents()
     main_window.active_clients_table.resizeRowsToContents()
 
-    # Функция, обновляющая список подключённых, проверяет флаг подключения, и
-    # если надо обновляет список
     def list_update():
+        """Функция, обновляющая список подключённых, проверяет флаг подключения, и
+        если надо обновляет список
+        """
         global new_connection
         if new_connection:
             main_window.active_clients_table.setModel(
@@ -214,8 +222,8 @@ def main():
             with conflag_lock:
                 new_connection = False
 
-    # Функция, создающая окно со статистикой клиентов
     def show_statistics():
+        """Функция, создающая окно со статистикой клиентов"""
         global stat_window
         stat_window = HistoryWindow()
         stat_window.history_table.setModel(create_stat_model(database))
@@ -223,8 +231,8 @@ def main():
         stat_window.history_table.resizeRowsToContents()
         stat_window.show()
 
-    # Функция создающяя окно с настройками сервера.
     def server_config():
+        """Функция создающяя окно с настройками сервера."""
         global config_window
         # Создаём окно и заносим в него текущие параметры
         config_window = ConfigWindow()
@@ -234,8 +242,8 @@ def main():
         config_window.ip.insert(config['SETTINGS']['Listen_Address'])
         config_window.save_btn.clicked.connect(save_server_config)
 
-    # Функция сохранения настроек
     def save_server_config():
+        """ Функция сохранения настроек"""
         global config_window
         message = QMessageBox()
         config['SETTINGS']['Database_path'] = config_window.db_path.text()
